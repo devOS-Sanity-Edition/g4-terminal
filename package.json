@@ -1,12 +1,12 @@
 {
   "name": "g4terminal",
   "version": "1.0.0",
-  "description": "",
+  "description": "The G4 game, in a terminal.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "scintilla4evr",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^12.7.5",

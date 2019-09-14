@@ -332,7 +332,6 @@ function start() {
     console.log(
         "Press " + " Space ".bgYellow.black + " to shoot, " + " Ctrl-C ".bgYellow.black + " to exit"
     )
-    console.log("\n")
 
     let game = new Game()
 
