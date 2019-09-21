@@ -1,5 +1,6 @@
 const colors = require("colors")
 const readline = require("readline")
+const argv = require("yargs").argv
 
 const {ReadStream, WriteStream} = require("tty")
 
@@ -354,12 +355,15 @@ function start() {
     game.start()
     
     game.render(true)
+
+    let fps = 30
+    if (argv.framerate) fps = +argv.framerate
     
     setInterval(() => {
         game.hitTest()
-        game.advance(1/30)
+        game.advance(1/fps)
         game.render()
-    }, 1000/30)
+    }, 1000/fps)
 
     process.stdin.on("keypress", (str, key) => {
         if (key.ctrl && key.name == "c") {
