@@ -12,7 +12,7 @@ readline.emitKeypressEvents(process.stdin)
 stdin.setRawMode(true)
 
 class GameItem {
-    pixelTest(x, y) { return false }
+    pixelTest(x, y) { return "none" }
     advance(dtime) {}
 }
 
@@ -33,7 +33,11 @@ class Ball extends GameItem {
         let centerX = Math.cos(angle) * this.distance
         let centerY = Math.sin(angle) * this.distance
 
-        return Math.hypot(centerX - x, centerY - y) <= this.radius
+        let pointDist = Math.hypot(centerX - x, centerY - y)
+
+        if (pointDist > this.radius) return "none"
+        if (pointDist > this.radius * 0.9) return "half"
+        return "full"
     }
 }
 
@@ -64,12 +68,13 @@ class Bar extends GameItem {
         } else {
             isBetween = angle >= clampedStart || angle <= clampedEnd
         }
-        if (!isBetween) return false
+        if (!isBetween) return "none"
 
-        let distance = Math.hypot(x, y)
+        let radiusDistance = Math.abs(Math.hypot(x, y) - this.distance)
 
-        if (Math.abs(distance - this.distance) <= this.radius && isBetween) return true
-        return false
+        if (radiusDistance > this.radius) return "none"
+        if (radiusDistance > this.radius * 0.7) return "half"
+        return "full"
     }
 }
 
@@ -89,7 +94,7 @@ class Bullet extends GameItem {
     }
 
     pixelTest(x, y) {
-        return Math.hypot(this.x - x, this.y - y) <= 0.05
+        return (Math.hypot(this.x - x, this.y - y) <= 0.05) ? "full" : "none"
     }
 }
 
@@ -222,7 +227,7 @@ class Game {
     hitTest() {
         if (!this.bullet) return
 
-        let hit = this.items.some(item => item.pixelTest(this.bullet.x, this.bullet.y))
+        let hit = this.items.some(item => (item.pixelTest(this.bullet.x, this.bullet.y) !== "none"))
 
         if (hit) {
             this.resetProgression()
@@ -257,18 +262,29 @@ class Game {
                 let pointX = 2 * x / (w - 1) - 1
                 let pointY = 2 * y / (h - 1) - 1
     
-                let draw = this.items.some(item => item.pixelTest(pointX, pointY))
+                let draw = "none"
+                this.items.forEach(item => {
+                    let test = item.pixelTest(pointX, pointY)
+                    if (test === "none") return
+
+                    if (test === "full") draw = "full"
+                    if (test === "half") draw = (draw === "full") ? "full" : "half"
+                })
     
                 let letter = " "
-                if (draw) {
-                    letter = "+"
+                if (draw !== "none") {
+
+                    if (draw === "full")
+                        letter = letter.bgCyan
+                    else
+                        letter = letter.bgBlue
                 
-                    if (this.highlight == "next")
-                        letter = letter.green
-                    else if (this.highlight == "hit")
-                        letter = letter.red
-                } else if (bullet.pixelTest(pointX, pointY)) {
-                    letter = "O".green.bgGreen
+                    // if (this.highlight == "next")
+                    //     letter = letter.green
+                    // else if (this.highlight == "hit")
+                    //     letter = letter.red
+                } else if (bullet.pixelTest(pointX, pointY) !== "none") {
+                    letter = " ".bgWhite
                 } else if (pointX == 0 && pointY == 0) {
                     letter = "+".yellow
                 }
