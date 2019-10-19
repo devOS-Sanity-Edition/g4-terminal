@@ -9,3 +9,8 @@ Otherwise (or if you don't want to use the exe on Windows):
 2. Clone the repository to your computer or download as ZIP and extract it.
 3. In the selected directory, run `npm install` and then `node g4` in the terminal.
 4. Enjoy the wonderful experience of G4 in your terminal :D
+
+[![Discord][1]][2]
+
+[1]:  https://discordapp.com/api/guilds/632990721552678923/widget.png?style=banner2
+[2]:  http://discord.gg/BKB4ft2
