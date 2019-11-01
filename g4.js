@@ -2,6 +2,8 @@ const colors = require("colors")
 const readline = require("readline")
 const argv = require("yargs").argv
 
+const RazerChromaRGBHandler = require("./chroma")
+
 const {ReadStream, WriteStream} = require("tty")
 
 /** @type {ReadStream} */
@@ -274,16 +276,7 @@ class Game {
     
                 let letter = " "
                 if (draw !== "none") {
-
-                    if (draw === "full")
-                        letter = letter.bgCyan
-                    else
-                        letter = letter.bgBlue
-                
-                    // if (this.highlight == "next")
-                    //     letter = letter.green
-                    // else if (this.highlight == "hit")
-                    //     letter = letter.red
+                    letter = "+".cyan
                 } else if (bullet.pixelTest(pointX, pointY) !== "none") {
                     letter = " ".bgWhite
                 } else if (pointX == 0 && pointY == 0) {
@@ -344,7 +337,7 @@ class Game {
 
 function start() {
     console.log(
-        " G4 Terminal ".bgGreen.black + " by " + "@scintilla4evr".green
+        " G4Y:7 ".bgGreen.black + " by " + "Team G4".green
     )
     console.log(
         "Press " + " Space ".bgYellow.black + " to shoot, " + " Ctrl-C ".bgYellow.black + " to exit"
@@ -365,11 +358,32 @@ function start() {
         game.render()
     }, 1000/fps)
 
+    let chroma = new RazerChromaRGBHandler()
+
+    chroma.init().then(() => {
+        chroma.updateGameColors({
+            background: "#000000",
+            damage: "#000000",
+
+            foreground: "#0080FF",
+            obstacle1: "#0080FF",
+            obstacle2: "#0080FF",
+
+            cannon: "#FFFFFF",
+            bullet: "#FFFFFF"
+        })
+        setInterval(async () => {
+            await chroma.render()
+            chroma.nextFrame(1/30)
+        }, 1000/30)
+    })
+
     process.stdin.on("keypress", (str, key) => {
         if (key.ctrl && key.name == "c") {
-            process.exit()
+            chroma.unInit().then(() => process.exit())
         } else if (key.name == "space") {
             game.shoot()
+            chroma.handleEvent("shoot")
         }
     })
 }
