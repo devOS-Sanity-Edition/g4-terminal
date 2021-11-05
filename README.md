@@ -11,6 +11,3 @@ Otherwise (or if you don't want to use the exe on Windows):
 4. Enjoy the wonderful experience of G4 in your terminal :D
 
 [![Discord][1]][2]
-
-[1]:  https://discordapp.com/api/guilds/632990721552678923/widget.png?style=banner2
-[2]:  http://discord.gg/BKB4ft2
